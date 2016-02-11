@@ -16,6 +16,13 @@ DerivedData
 *.perspectivev3
 !default.perspectivev3
 xcuserdata
+*.xccheckout
+*.xcuserstate
+*~.nib
+
+# AppCode
+#
+.idea/
 
 ## Other
 *.xccheckout
@@ -34,6 +41,8 @@ xcuserdata
 # https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
 #
 # Pods/
+*.dblite
+Pods/
 
 # Carthage
 #
