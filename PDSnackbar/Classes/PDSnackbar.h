@@ -6,6 +6,8 @@
 //  Copyright © 2016 Prime Digital. All rights reserved.
 //
 
+
+#import "PDSnackbarOptions.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 

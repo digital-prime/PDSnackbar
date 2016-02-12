@@ -10,6 +10,7 @@
 		258B33A94DDFD77CE20C30ED /* libPods-PDSnackbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 21FF4479DC59E4ADCE6C8F5E /* libPods-PDSnackbar.a */; };
 		7E1EBA321C6DE1EF0068A3E9 /* SF-UI-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7E1EBA301C6DE1E40068A3E9 /* SF-UI-Display-Medium.otf */; };
 		7E1EBA331C6DE1F20068A3E9 /* SF-UI-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7E1EBA311C6DE1E40068A3E9 /* SF-UI-Display-Regular.otf */; };
+		7ED420211C6E21A90072E2BA /* PDSnackbarOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED420201C6E21A90072E2BA /* PDSnackbarOptions.m */; };
 		8EEA5352A81AEAD907687470 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EEA5AA94DDD55E5B71D6F7B /* ViewController.m */; };
 		8EEA548C6EA842E66EBB0AC4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EEA5A22351C85184050E366 /* AppDelegate.m */; };
 		8EEA54B3A4D2402089AF6239 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EEA54938FBCFABC425C8A3D /* main.m */; };
@@ -25,6 +26,8 @@
 		7E1EBA301C6DE1E40068A3E9 /* SF-UI-Display-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Medium.otf"; sourceTree = "<group>"; };
 		7E1EBA311C6DE1E40068A3E9 /* SF-UI-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Regular.otf"; sourceTree = "<group>"; };
 		7EB570011C6CCDD800F38916 /* PDSnackbar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PDSnackbar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7ED4201F1C6E21A90072E2BA /* PDSnackbarOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDSnackbarOptions.h; sourceTree = "<group>"; };
+		7ED420201C6E21A90072E2BA /* PDSnackbarOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDSnackbarOptions.m; sourceTree = "<group>"; };
 		8EEA5052496D018F74CA186F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8EEA51646663B901D8C54623 /* PDSnackbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDSnackbar.h; sourceTree = "<group>"; };
 		8EEA5181CCB876BD7A9CF469 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
@@ -118,6 +121,8 @@
 			children = (
 				8EEA51646663B901D8C54623 /* PDSnackbar.h */,
 				8EEA54586C1DA879C482EC05 /* PDSnackbar.m */,
+				7ED4201F1C6E21A90072E2BA /* PDSnackbarOptions.h */,
+				7ED420201C6E21A90072E2BA /* PDSnackbarOptions.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -256,6 +261,7 @@
 				8EEA548C6EA842E66EBB0AC4 /* AppDelegate.m in Sources */,
 				8EEA5352A81AEAD907687470 /* ViewController.m in Sources */,
 				8EEA54B3A4D2402089AF6239 /* main.m in Sources */,
+				7ED420211C6E21A90072E2BA /* PDSnackbarOptions.m in Sources */,
 				8EEA54BE8C562ABFAB1CD74C /* PDSnackbar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

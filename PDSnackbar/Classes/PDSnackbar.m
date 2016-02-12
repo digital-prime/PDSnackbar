@@ -9,17 +9,9 @@
 #import "PDSnackbar.h"
 #import <PureLayout/PureLayout.h>
 
-#define SNACKBAR_TEXT_COLOR [UIColor colorWithRed:72.f / 255.0f green:68.f / 255.0f blue:62.f / 255.0f alpha:255.f / 255.0f]
-#define SNACKBAR_BUTTON_COLOR [UIColor colorWithRed:252.f / 255.0f green:117.f / 255.0f blue:31.f / 255.0f alpha:255.f / 255.0f]
-
-static CGFloat const PDSnackbarHeight = 80.f;
 static CGFloat const PDSnackbarAnimationDuration = 0.2;
 
-static NSString * const PDSnackbarSFMediumFontName  = @"SFUIDisplay-Medium";
-static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
-
 @implementation PDSnackbar {
-    UIView                  *_containerView;
     UILabel                 *_messageLabel;
     UIButton                *_actionButton;
     UIActivityIndicatorView *_activityIndicator;
@@ -36,13 +28,14 @@ static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
                                duration:(SnackbarDurationTime)durationTime {
     self = [super init];
     if (self) {
-        _containerView = [self getContainerView];
+        PDSnackbarOptions *pdOptions = [PDSnackbarOptions sharedInstance];
+        self.frame = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? pdOptions.frameIPad : pdOptions.frameIPhone;
         _durationTime = durationTime;
 
         [self createMessageLabel];
         _messageLabel.text = message;
-        _messageLabel.textColor = SNACKBAR_TEXT_COLOR;
-        _messageLabel.font = [UIFont fontWithName:PDSnackbarSFRegularFontName size:16.f];
+        _messageLabel.textColor = pdOptions.textColor;
+        _messageLabel.font = pdOptions.textFont;
 
         _transparency = 0.95;
         self.backgroundColor = [UIColor whiteColor];
@@ -73,7 +66,7 @@ static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
         [_actionButton addTarget:self
                           action:@selector(actionButtonTapped:)
                 forControlEvents:UIControlEventTouchUpInside];
-        _actionButton.titleLabel.font = [UIFont fontWithName:PDSnackbarSFMediumFontName size:16.f];
+        _actionButton.titleLabel.font = [PDSnackbarOptions sharedInstance].buttonTitleFont;
         _actionBlock = actionBlock;
     }
     return self;
@@ -132,9 +125,6 @@ static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
 #pragma mark - Create Content
 
 - (void)createMessageLabel {
-    self.frame = CGRectMake(0, CGRectGetMaxY(_containerView.frame),
-            CGRectGetWidth(_containerView.frame), PDSnackbarHeight);
-
     _messageLabel = [[UILabel alloc] init];
     _messageLabel.numberOfLines = 1;
     [self addSubview:_messageLabel];
@@ -172,9 +162,9 @@ static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
 
 - (void)createActionButton {
     _actionButton = [[UIButton alloc] init];
-    [_actionButton setTitleColor:SNACKBAR_TEXT_COLOR
+    [_actionButton setTitleColor:[PDSnackbarOptions sharedInstance].buttonTitleHighlighted
                         forState:UIControlStateHighlighted];
-    [_actionButton setTitleColor:SNACKBAR_BUTTON_COLOR
+    [_actionButton setTitleColor:[PDSnackbarOptions sharedInstance].buttonTitleColor
                         forState:UIControlStateNormal];
     [self addSubview:_actionButton];
 
@@ -200,20 +190,20 @@ static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
 }
 
 - (void)show {
-    for (UIView *view in _containerView.subviews) {
+    for (UIView *view in [[PDSnackbarOptions sharedInstance] containerView].subviews) {
         if ([view isKindOfClass:PDSnackbar.class]) {
             return;
         }
     }
     
-    [_containerView addSubview:self];
+    [[PDSnackbarOptions sharedInstance].containerView addSubview:self];
     [self addSwipeGestures];
     [_activityIndicator startAnimating];
     [UIView animateWithDuration:PDSnackbarAnimationDuration
                      animations:^{
                          self.alpha = self.transparency;
                          CGRect newFrame = self.frame;
-                         newFrame.origin.y = self.frame.origin.y - PDSnackbarHeight;
+                         newFrame.origin.y = self.frame.origin.y - self.frame.size.height;
                          self.frame = newFrame;
                      }];
     
@@ -234,7 +224,7 @@ static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
                      animations:^{
                          self.alpha = 0.f;
                          CGRect newFrame = self.frame;
-                         newFrame.origin.y = _containerView.frame.size.height;
+                         newFrame.origin.y = [[PDSnackbarOptions sharedInstance] containerView].frame.size.height;
                          self.frame = newFrame;
                      }
                      completion:^(BOOL finished) {
@@ -256,22 +246,6 @@ static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
 
 - (void)downSwipe:(UISwipeGestureRecognizer *)swipeGestureRecognizer {
     [self hide];
-}
-
-#pragma mark - Container View
-
-- (UIView *)getContainerView {
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] <= 9.0) {
-        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-        if (!window)
-            window = [[UIApplication sharedApplication].windows objectAtIndex:0];
-        return [window subviews].lastObject;
-    } else {
-        UIWindow *window =[[UIApplication sharedApplication] keyWindow];
-        if (window == nil)
-            window = [[[UIApplication sharedApplication] delegate] window];
-        return window;
-    }
 }
 
 @end
