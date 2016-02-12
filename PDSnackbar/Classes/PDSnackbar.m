@@ -28,14 +28,14 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
                                duration:(SnackbarDurationTime)durationTime {
     self = [super init];
     if (self) {
-        PDSnackbarOptions *pdConfigurator = [PDSnackbarOptions sharedInstance];
-        self.frame = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? pdConfigurator.frameIPad : pdConfigurator.frameIPhone;
+        PDSnackbarOptions *pdOptions = [PDSnackbarOptions sharedInstance];
+        self.frame = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? pdOptions.frameIPad : pdOptions.frameIPhone;
         _durationTime = durationTime;
 
         [self createMessageLabel];
         _messageLabel.text = message;
-        _messageLabel.textColor = pdConfigurator.textColor;
-        _messageLabel.font = pdConfigurator.textFont;
+        _messageLabel.textColor = pdOptions.textColor;
+        _messageLabel.font = pdOptions.textFont;
 
         _transparency = 0.95;
         self.backgroundColor = [UIColor whiteColor];
