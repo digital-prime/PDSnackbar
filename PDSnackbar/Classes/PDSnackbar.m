@@ -12,11 +12,15 @@
 #define SNACKBAR_TEXT_COLOR [UIColor colorWithRed:72.f / 255.0f green:68.f / 255.0f blue:62.f / 255.0f alpha:255.f / 255.0f]
 #define SNACKBAR_BUTTON_COLOR [UIColor colorWithRed:252.f / 255.0f green:117.f / 255.0f blue:31.f / 255.0f alpha:255.f / 255.0f]
 
-static CGFloat const PDSnackbarHeight = 100.f;
+static CGFloat const PDSnackbarHeight = 80.f;
 static CGFloat const PDSnackbarAnimationDuration = 0.2;
+
+static NSString * const PDSnackbarSFMediumFontName  = @"SFUIDisplay-Medium";
+static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
 
 @implementation PDSnackbar {
     UIView                  *_containerView;
+    UILabel                 *_messageLabel;
     UIButton                *_actionButton;
     UIActivityIndicatorView *_activityIndicator;
     SnackbarDurationTime    _durationTime;
@@ -24,20 +28,23 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
     ActionBlock             _actionBlock;
 }
 
+@synthesize multiline = _multiline;
+
 #pragma mark init
 
-- (instancetype)initSnackBarWithContainerView:(__kindof UIView *)containerView
-                                      message:(NSString *)message
-                                     duration:(SnackbarDurationTime)durationTime {
+- (instancetype)initSnackBarWithMessage:(NSString *)message
+                               duration:(SnackbarDurationTime)durationTime {
     self = [super init];
     if (self) {
-        _containerView = containerView;
+        _containerView = [self getContainerView];
         _durationTime = durationTime;
 
         [self createMessageLabel];
         _messageLabel.text = message;
         _messageLabel.textColor = SNACKBAR_TEXT_COLOR;
+        _messageLabel.font = [UIFont fontWithName:PDSnackbarSFRegularFontName size:16.f];
 
+        _transparency = 0.95;
         self.backgroundColor = [UIColor whiteColor];
 
         self.layer.shadowRadius  = 3.f;
@@ -53,14 +60,12 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
     return self;
 }
 
-- (instancetype)initActionSnackBarWithContainerView:(__kindof UIView *)containerView
-                                            message:(NSString *)message
-                                        actionTitle:(NSString *)actionTitle
-                                        actionBlock:(ActionBlock)actionBlock
-                                           duration:(SnackbarDurationTime)durationTime {
-    self = [self initSnackBarWithContainerView:containerView
-                                       message:message
-                                      duration:durationTime];
+- (instancetype)initActionSnackBarWithMessage:(NSString *)message
+                                  actionTitle:(NSString *)actionTitle
+                                  actionBlock:(ActionBlock)actionBlock
+                                     duration:(SnackbarDurationTime)durationTime {
+    self = [self initSnackBarWithMessage:message
+                                duration:durationTime];
     if (self) {
         [self createActionButton];
         [_actionButton setTitle:actionTitle
@@ -68,27 +73,63 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
         [_actionButton addTarget:self
                           action:@selector(actionButtonTapped:)
                 forControlEvents:UIControlEventTouchUpInside];
+        _actionButton.titleLabel.font = [UIFont fontWithName:PDSnackbarSFMediumFontName size:16.f];
         _actionBlock = actionBlock;
     }
     return self;
 }
 
-- (void)actionButtonTapped:(id)sender {
-    _actionBlock();
-    [self hide];
-}
-
-- (instancetype)initIndicatorSnackBarWithContainerView:(__kindof UIView *)containerView
-                                               message:(NSString *)message
-                                              duration:(SnackbarDurationTime)durationTime {
-    self = [self initSnackBarWithContainerView:containerView
-                                       message:message
-                                      duration:durationTime];
+- (instancetype)initIndicatorSnackBarWithMessage:(NSString *)message
+                                        duration:(SnackbarDurationTime)durationTime {
+    self = [self initSnackBarWithMessage:message
+                                duration:durationTime];
     if (self) {
         [self createIndicatorView];
     }
     return self;
 }
+
+#pragma mark - Dealloc
+
+- (void)dealloc {
+    [_timer invalidate];
+    _timer = nil;
+}
+
+#pragma mark Custom Setters
+
+- (void)setMultiline:(BOOL)multiline {
+    _multiline = multiline;
+    _messageLabel.numberOfLines = multiline ? 0 : 1;
+}
+
+- (void)setActionTitleColor:(UIColor *)actionTitleColor {
+    _actionTitleColor = actionTitleColor;
+    [_actionButton setTitleColor:actionTitleColor
+                        forState:UIControlStateNormal];
+}
+
+- (void)setMessageLabelTextColor:(UIColor *)messageLabelTextColor {
+    _messageLabelTextColor = messageLabelTextColor;
+    _messageLabel.textColor = messageLabelTextColor;
+}
+
+- (void)setMessage:(NSString *)message {
+    _message = message;
+    _messageLabel.text = message;
+}
+
+- (void)setMessageFont:(UIFont *)messageFont {
+    _messageFont = messageFont;
+    _messageLabel.font = messageFont;
+}
+
+- (void)setActionButtonFont:(UIFont *)actionButtonFont {
+    _actionButtonFont = actionButtonFont;
+    _actionButton.titleLabel.font = actionButtonFont;
+}
+
+#pragma mark - Create Content
 
 - (void)createMessageLabel {
     self.frame = CGRectMake(0, CGRectGetMaxY(_containerView.frame),
@@ -149,8 +190,13 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
                                     withInset:120.f];
 }
 
-- (void)multiline {
-    self.messageLabel.numberOfLines = 0;
+#pragma mark - Action
+
+- (void)actionButtonTapped:(id)sender {
+    if (_actionBlock) {
+        _actionBlock();
+    }
+    [self hide];
 }
 
 - (void)show {
@@ -159,22 +205,22 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
             return;
         }
     }
-
+    
     [_containerView addSubview:self];
     [self addSwipeGestures];
     [_activityIndicator startAnimating];
     [UIView animateWithDuration:PDSnackbarAnimationDuration
                      animations:^{
-                         self.alpha = 0.8f;
+                         self.alpha = self.transparency;
                          CGRect newFrame = self.frame;
                          newFrame.origin.y = self.frame.origin.y - PDSnackbarHeight;
                          self.frame = newFrame;
                      }];
-
-    if (_actionButton || _activityIndicator) {
+    
+    if (_actionBlock || _activityIndicator) {
         return;
     }
-    _timer = [NSTimer scheduledTimerWithTimeInterval:_durationTime
+    _timer = [NSTimer scheduledTimerWithTimeInterval:self.duration > 0 ?: _durationTime
                                               target:self
                                             selector:@selector(hide)
                                             userInfo:nil
@@ -198,10 +244,7 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
                      }];
 }
 
-- (void)dealloc {
-    [_timer invalidate];
-    _timer = nil;
-}
+#pragma mark - UISwipeGestureRecognizer
 
 - (void)addSwipeGestures {
     UISwipeGestureRecognizer *downSwipeGestureRecognizer =
@@ -213,6 +256,22 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
 
 - (void)downSwipe:(UISwipeGestureRecognizer *)swipeGestureRecognizer {
     [self hide];
+}
+
+#pragma mark - Container View
+
+- (UIView *)getContainerView {
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] <= 9.0) {
+        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+        if (!window)
+            window = [[UIApplication sharedApplication].windows objectAtIndex:0];
+        return [window subviews].lastObject;
+    } else {
+        UIWindow *window =[[UIApplication sharedApplication] keyWindow];
+        if (window == nil)
+            window = [[[UIApplication sharedApplication] delegate] window];
+        return window;
+    }
 }
 
 @end
