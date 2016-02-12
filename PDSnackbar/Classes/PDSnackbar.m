@@ -28,7 +28,7 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
                                duration:(SnackbarDurationTime)durationTime {
     self = [super init];
     if (self) {
-        PDSnackbarConfigurator *pdConfigurator = [PDSnackbarConfigurator sharedConfigurator];
+        PDSnackbarOptions *pdConfigurator = [PDSnackbarOptions sharedInstance];
         self.frame = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? pdConfigurator.frameIPad : pdConfigurator.frameIPhone;
         _durationTime = durationTime;
 
@@ -66,7 +66,7 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
         [_actionButton addTarget:self
                           action:@selector(actionButtonTapped:)
                 forControlEvents:UIControlEventTouchUpInside];
-        _actionButton.titleLabel.font = [PDSnackbarConfigurator sharedConfigurator].buttonTitleFont;
+        _actionButton.titleLabel.font = [PDSnackbarOptions sharedInstance].buttonTitleFont;
         _actionBlock = actionBlock;
     }
     return self;
@@ -162,9 +162,9 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
 
 - (void)createActionButton {
     _actionButton = [[UIButton alloc] init];
-    [_actionButton setTitleColor:[PDSnackbarConfigurator sharedConfigurator].buttonTitleHighlighted
+    [_actionButton setTitleColor:[PDSnackbarOptions sharedInstance].buttonTitleHighlighted
                         forState:UIControlStateHighlighted];
-    [_actionButton setTitleColor:[PDSnackbarConfigurator sharedConfigurator].buttonTitleColor
+    [_actionButton setTitleColor:[PDSnackbarOptions sharedInstance].buttonTitleColor
                         forState:UIControlStateNormal];
     [self addSubview:_actionButton];
 
@@ -190,13 +190,13 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
 }
 
 - (void)show {
-    for (UIView *view in [[PDSnackbarConfigurator sharedConfigurator] containerView].subviews) {
+    for (UIView *view in [[PDSnackbarOptions sharedInstance] containerView].subviews) {
         if ([view isKindOfClass:PDSnackbar.class]) {
             return;
         }
     }
     
-    [[PDSnackbarConfigurator sharedConfigurator].containerView addSubview:self];
+    [[PDSnackbarOptions sharedInstance].containerView addSubview:self];
     [self addSwipeGestures];
     [_activityIndicator startAnimating];
     [UIView animateWithDuration:PDSnackbarAnimationDuration
@@ -224,7 +224,7 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
                      animations:^{
                          self.alpha = 0.f;
                          CGRect newFrame = self.frame;
-                         newFrame.origin.y = [[PDSnackbarConfigurator sharedConfigurator] containerView].frame.size.height;
+                         newFrame.origin.y = [[PDSnackbarOptions sharedInstance] containerView].frame.size.height;
                          self.frame = newFrame;
                      }
                      completion:^(BOOL finished) {

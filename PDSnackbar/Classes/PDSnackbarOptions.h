@@ -1,5 +1,5 @@
 //
-//  PDSnackbarConfigurator.h
+//  PDSnackbarOptions.h
 //  PDSnackbar
 //
 //  Created by Stanislav Proskurnin on 12/02/16.
@@ -11,7 +11,7 @@
 
 extern CGFloat const PDSnackbarHeight;
 
-@interface PDSnackbarConfigurator : NSObject
+@interface PDSnackbarOptions : NSObject
 
 @property (assign, nonatomic) CGRect  frameIPhone;
 @property (assign, nonatomic) CGRect  frameIPad;
@@ -21,7 +21,7 @@ extern CGFloat const PDSnackbarHeight;
 @property (strong, nonatomic) UIFont  *buttonTitleFont;
 @property (strong, nonatomic) UIFont  *textFont;
 
-+ (instancetype)sharedConfigurator;
++ (instancetype)sharedInstance;
 
 - (UIView *)containerView;
 

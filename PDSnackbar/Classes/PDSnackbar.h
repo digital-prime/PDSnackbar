@@ -7,7 +7,7 @@
 //
 
 
-#import "PDSnackbarConfigurator.h"
+#import "PDSnackbarOptions.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 

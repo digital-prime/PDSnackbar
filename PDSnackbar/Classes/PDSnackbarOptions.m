@@ -1,5 +1,5 @@
 //
-//  PDSnackbarConfigurator.m
+//  PDSnackbarOptions.m
 //  PDSnackbar
 //
 //  Created by Stanislav Proskurnin on 12/02/16.
@@ -9,20 +9,20 @@
 #define SNACKBAR_TEXT_COLOR [UIColor colorWithRed:72.f / 255.0f green:68.f / 255.0f blue:62.f / 255.0f alpha:255.f / 255.0f]
 #define SNACKBAR_BUTTON_COLOR [UIColor colorWithRed:252.f / 255.0f green:117.f / 255.0f blue:31.f / 255.0f alpha:255.f / 255.0f]
 
-#import "PDSnackbarConfigurator.h"
+#import "PDSnackbarOptions.h"
 
 CGFloat const PDSnackbarHeight = 80.f;
 
 static NSString * const PDSnackbarSFMediumFontName  = @"SFUIDisplay-Medium";
 static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
 
-@implementation PDSnackbarConfigurator {
+@implementation PDSnackbarOptions {
     UIView *_containerView;
 }
 
-+ (instancetype)sharedConfigurator {
-    @synchronized ([PDSnackbarConfigurator class]) {
-        static PDSnackbarConfigurator *singleton;
++ (instancetype)sharedInstance {
+    @synchronized ([PDSnackbarOptions class]) {
+        static PDSnackbarOptions *singleton;
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             singleton = [[self alloc] initUniqueInstance];
@@ -58,7 +58,7 @@ static NSString * const PDSnackbarSFRegularFontName = @"SFUIDisplay-Regular";
         if ([[[UIDevice currentDevice] systemVersion] floatValue] <= 9.0) {
             UIWindow *window = [[UIApplication sharedApplication] keyWindow];
             if (!window)
-                window = [[UIApplication sharedApplication].windows objectAtIndex:0];
+                window = [UIApplication sharedApplication].windows[0];
             _containerView =  [window subviews].lastObject;
         } else {
             UIWindow *window =[[UIApplication sharedApplication] keyWindow];
