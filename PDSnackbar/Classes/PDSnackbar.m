@@ -210,7 +210,7 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
     if (_actionBlock || _activityIndicator) {
         return;
     }
-    _timer = [NSTimer scheduledTimerWithTimeInterval:self.duration > 0 ?: _durationTime
+    _timer = [NSTimer scheduledTimerWithTimeInterval:(self.duration > 0) ? self.duration : (double)_durationTime
                                               target:self
                                             selector:@selector(hide)
                                             userInfo:nil
