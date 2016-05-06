@@ -18,6 +18,7 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
     SnackbarDurationTime    _durationTime;
     NSTimer                 *_timer;
     ActionBlock             _actionBlock;
+    TouchBlock              _touchBlock;
 }
 
 @synthesize multiline = _multiline;
@@ -49,6 +50,22 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
         self.layer.masksToBounds = NO;
 
         self.alpha = 0.f;
+    }
+    return self;
+}
+
+- (instancetype)initSnackBarWithMessage:(NSString *)message
+                               duration:(SnackbarDurationTime)durationTime
+                             touchBlock:(TouchBlock)touchBlock {
+    self = [self initSnackBarWithMessage:message duration:durationTime];
+    if (self) {
+        UITapGestureRecognizer *tapGestureRecognizer =
+        [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                action:@selector(touchBlockTapped:)];
+        tapGestureRecognizer.numberOfTapsRequired = 1;
+        [self addGestureRecognizer:tapGestureRecognizer];
+        self.userInteractionEnabled = YES;
+        _touchBlock = touchBlock;
     }
     return self;
 }
@@ -185,6 +202,13 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
 - (void)actionButtonTapped:(id)sender {
     if (_actionBlock) {
         _actionBlock();
+    }
+    [self hide];
+}
+
+- (void)touchBlockTapped:(id)sender {
+    if (_touchBlock) {
+        _touchBlock();
     }
     [self hide];
 }

@@ -17,21 +17,26 @@ typedef NS_ENUM(NSUInteger, SnackbarDurationTime) {
 };
 
 typedef void (^ActionBlock)();
+typedef void (^TouchBlock)();
 
 @interface PDSnackbar : UIControl
 
 
-@property (strong, nonatomic) UIColor        *actionTitleColor;
-@property (strong, nonatomic) UIColor        *messageLabelTextColor;
-@property (strong, nonatomic) NSString       *message;
-@property (strong, nonatomic) UIFont         *actionButtonFont;
-@property (strong, nonatomic) UIFont         *messageFont;
+@property (nonatomic) UIColor        *actionTitleColor;
+@property (nonatomic) UIColor        *messageLabelTextColor;
+@property (nonatomic) NSString       *message;
+@property (nonatomic) UIFont         *actionButtonFont;
+@property (nonatomic) UIFont         *messageFont;
 @property (assign, nonatomic) CGFloat        transparency;
 @property (assign, nonatomic) BOOL           multiline;
 @property (assign, nonatomic) NSTimeInterval duration;
 
 - (instancetype)initSnackBarWithMessage:(NSString *)message
                                duration:(SnackbarDurationTime)durationTime;
+
+- (instancetype)initSnackBarWithMessage:(NSString *)message
+                               duration:(SnackbarDurationTime)durationTime
+                             touchBlock:(TouchBlock)touchBlock;
 
 - (instancetype)initIndicatorSnackBarWithMessage:(NSString *)message
                                         duration:(SnackbarDurationTime)durationTime;
