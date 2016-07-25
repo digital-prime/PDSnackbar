@@ -11,204 +11,222 @@
 
 static CGFloat const PDSnackbarAnimationDuration = 0.2;
 
-@implementation PDSnackbar {
-    UILabel                 *_messageLabel;
-    UIButton                *_actionButton;
-    UIActivityIndicatorView *_activityIndicator;
-    SnackbarDurationTime    _durationTime;
-    NSTimer                 *_timer;
-    ActionBlock             _actionBlock;
-    TouchBlock              _touchBlock;
-}
 
-@synthesize multiline = _multiline;
+@interface PDSnackbar ()
+
+@property (nonnull, nonatomic, strong) UILabel *messageLabel;
+@property (nonnull, nonatomic, strong) UIButton *actionButton;
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
+@property (nonatomic) PDSnackbarDurationTime durationTime;
+@property (nonatomic, strong) NSTimer *timer;
+@property (nonatomic, copy) PDSnackbarActionBlock actionBlock;
+@property (nonatomic, copy) PDSnackbarTouchBlock touchBlock;
+@end
+
+@implementation PDSnackbar
 
 #pragma mark init
 
-- (instancetype)initSnackBarWithMessage:(NSString *)message
-                               duration:(SnackbarDurationTime)durationTime {
+
+- (nonnull instancetype)initSnackBarWithMessage:(nonnull NSString *)message
+                                       duration:(PDSnackbarDurationTime)durationTime {
+    return [self initWithConfiguration:@{
+            PDSnackbarMessageName : message,
+            PDSnackbarDurationTimeName : @(durationTime)
+    }];
+}
+
+- (nonnull instancetype)initSnackBarWithMessage:(nonnull NSString *)message
+                                       duration:(PDSnackbarDurationTime)durationTime
+                                     touchBlock:(nonnull PDSnackbarTouchBlock)touchBlock {
+    return [self initWithConfiguration:@{
+            PDSnackbarMessageName : message,
+            PDSnackbarDurationTimeName : @(durationTime),
+            PDSnackbarTapBlockName : [touchBlock copy]
+    }];
+}
+
+- (nonnull instancetype)initIndicatorSnackBarWithMessage:(nonnull NSString *)message
+                                                duration:(PDSnackbarDurationTime)durationTime {
+    return [self initWithConfiguration:@{
+            PDSnackbarMessageName : message,
+            PDSnackbarActivityIndicatorEnabledName : @YES,
+            PDSnackbarDurationTimeName : @(durationTime),
+    }];
+}
+
+- (nonnull instancetype)initActionSnackBarWithMessage:(nonnull NSString *)message
+                                          actionTitle:(nonnull NSString *)actionTitle
+                                          actionBlock:(nonnull PDSnackbarActionBlock)actionBlock {
+    return [self initWithConfiguration:@{
+            PDSnackbarMessageName : message,
+            PDSnackbarActionButtonTitleName : actionTitle,
+            PDSnackbarActionButtonTapBlockName : [actionBlock copy]
+    }];
+}
+
+- (nonnull instancetype)init {
+    return [self initWithConfiguration:@{}];
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-designated-initializers"
+
+- (nonnull instancetype)initWithConfiguration:(nonnull NSDictionary<NSString *, id> *)configuration {
     self = [super init];
     if (self) {
         PDSnackbarOptions *pdOptions = [PDSnackbarOptions sharedInstance];
         self.frame = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? pdOptions.frameIPad : pdOptions.frameIPhone;
-        _durationTime = durationTime;
 
         [self createMessageLabel];
-        _messageLabel.text = message;
+        _messageLabel.text = configuration[PDSnackbarMessageName];
         _messageLabel.textColor = pdOptions.textColor;
         _messageLabel.font = pdOptions.textFont;
 
         _transparency = 0.95;
         self.backgroundColor = [UIColor whiteColor];
 
-        self.layer.shadowRadius  = 3.f;
+        self.layer.shadowRadius = 3.f;
         self.layer.shadowOpacity = 0.5f;
-        self.layer.shadowColor   = [UIColor grayColor].CGColor;
-        self.layer.shadowOffset  = CGSizeZero;
+        self.layer.shadowColor = [UIColor grayColor].CGColor;
+        self.layer.shadowOffset = CGSizeZero;
         self.layer.shouldRasterize = YES;
         self.layer.rasterizationScale = [UIScreen mainScreen].scale;
         self.layer.masksToBounds = NO;
 
         self.alpha = 0.f;
+
+        self.durationTime = (PDSnackbarDurationTime) ((NSNumber *) configuration[PDSnackbarDurationTimeName]).unsignedIntegerValue;
+
+        if (configuration[PDSnackbarActionButtonTitleName]) {
+            [self createActionButton];
+            [self.actionButton setTitle:configuration[PDSnackbarActionButtonTitleName] forState:UIControlStateNormal];
+            [self.actionButton addTarget:self action:@selector(actionButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+            self.actionButton.titleLabel.font = [PDSnackbarOptions sharedInstance].buttonTitleFont;
+            self.actionBlock = [configuration[PDSnackbarActionButtonTapBlockName] copy];
+        }
+
+        if (configuration[PDSnackbarTapBlockName]) {
+            PDSnackbarTouchBlock touchBlock = [configuration[PDSnackbarTapBlockName] copy];
+            UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                                   action:@selector(touchBlockTapped:)];
+            tapGestureRecognizer.numberOfTapsRequired = 1;
+            [self addGestureRecognizer:tapGestureRecognizer];
+            self.userInteractionEnabled = YES;
+            _touchBlock = touchBlock;
+        }
+
+        if (configuration[PDSnackbarActivityIndicatorEnabledName]) {
+            [self createIndicatorView];
+        }
     }
     return self;
 }
 
-- (instancetype)initSnackBarWithMessage:(NSString *)message
-                               duration:(SnackbarDurationTime)durationTime
-                             touchBlock:(TouchBlock)touchBlock {
-    self = [self initSnackBarWithMessage:message duration:durationTime];
-    if (self) {
-        UITapGestureRecognizer *tapGestureRecognizer =
-        [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                action:@selector(touchBlockTapped:)];
-        tapGestureRecognizer.numberOfTapsRequired = 1;
-        [self addGestureRecognizer:tapGestureRecognizer];
-        self.userInteractionEnabled = YES;
-        _touchBlock = touchBlock;
-    }
-    return self;
-}
-
-- (instancetype)initActionSnackBarWithMessage:(NSString *)message
-                                  actionTitle:(NSString *)actionTitle
-                                  actionBlock:(ActionBlock)actionBlock
-                                     duration:(SnackbarDurationTime)durationTime {
-    self = [self initSnackBarWithMessage:message
-                                duration:durationTime];
-    if (self) {
-        [self createActionButton];
-        [_actionButton setTitle:actionTitle
-                       forState:UIControlStateNormal];
-        [_actionButton addTarget:self
-                          action:@selector(actionButtonTapped:)
-                forControlEvents:UIControlEventTouchUpInside];
-        _actionButton.titleLabel.font = [PDSnackbarOptions sharedInstance].buttonTitleFont;
-        _actionBlock = actionBlock;
-    }
-    return self;
-}
-
-- (instancetype)initIndicatorSnackBarWithMessage:(NSString *)message
-                                        duration:(SnackbarDurationTime)durationTime {
-    self = [self initSnackBarWithMessage:message
-                                duration:durationTime];
-    if (self) {
-        [self createIndicatorView];
-    }
-    return self;
-}
+#pragma clang diagnostic pop
 
 #pragma mark - Dealloc
 
 - (void)dealloc {
-    [_timer invalidate];
-    _timer = nil;
+    [self.timer invalidate];
+    self.timer = nil;
 }
 
 #pragma mark Custom Setters
 
 - (void)setMultiline:(BOOL)multiline {
-    _multiline = multiline;
-    _messageLabel.numberOfLines = multiline ? 0 : 1;
+    self.messageLabel.numberOfLines = multiline ? 0 : 1;
 }
 
 - (void)setActionTitleColor:(UIColor *)actionTitleColor {
-    _actionTitleColor = actionTitleColor;
-    [_actionButton setTitleColor:actionTitleColor
-                        forState:UIControlStateNormal];
+    [self.actionButton setTitleColor:actionTitleColor
+                            forState:UIControlStateNormal];
 }
 
 - (void)setMessageLabelTextColor:(UIColor *)messageLabelTextColor {
-    _messageLabelTextColor = messageLabelTextColor;
-    _messageLabel.textColor = messageLabelTextColor;
+    self.messageLabel.textColor = messageLabelTextColor;
 }
 
 - (void)setMessage:(NSString *)message {
-    _message = message;
-    _messageLabel.text = message;
+    self.messageLabel.text = message;
 }
 
 - (void)setMessageFont:(UIFont *)messageFont {
-    _messageFont = messageFont;
-    _messageLabel.font = messageFont;
+    self.messageLabel.font = messageFont;
 }
 
 - (void)setActionButtonFont:(UIFont *)actionButtonFont {
-    _actionButtonFont = actionButtonFont;
-    _actionButton.titleLabel.font = actionButtonFont;
+    self.actionButton.titleLabel.font = actionButtonFont;
 }
 
 #pragma mark - Create Content
 
 - (void)createMessageLabel {
-    _messageLabel = [[UILabel alloc] init];
-    _messageLabel.numberOfLines = 1;
-    [self addSubview:_messageLabel];
+    self.messageLabel = [[UILabel alloc] init];
+    self.messageLabel.numberOfLines = 1;
+    [self addSubview:self.messageLabel];
 
-    [_messageLabel autoAlignAxis:ALAxisHorizontal
-                toSameAxisOfView:self];
-    [_messageLabel autoPinEdgeToSuperviewEdge:ALEdgeLeft
-                                    withInset:20.f];
-    [_messageLabel autoPinEdgeToSuperviewEdge:ALEdgeTop
-                                    withInset:10.f];
-    [_messageLabel autoPinEdgeToSuperviewEdge:ALEdgeBottom
-                                    withInset:10.f];
-    [_messageLabel autoPinEdgeToSuperviewEdge:ALEdgeRight
-                                    withInset:25.f];
+    [self.messageLabel autoAlignAxis:ALAxisHorizontal
+                    toSameAxisOfView:self];
+    [self.messageLabel autoPinEdgeToSuperviewEdge:ALEdgeLeft
+                                        withInset:20.f];
+    [self.messageLabel autoPinEdgeToSuperviewEdge:ALEdgeTop
+                                        withInset:10.f];
+    [self.messageLabel autoPinEdgeToSuperviewEdge:ALEdgeBottom
+                                        withInset:10.f];
+    [self.messageLabel autoPinEdgeToSuperviewEdge:ALEdgeRight
+                                        withInset:25.f];
 }
 
 - (void)createIndicatorView {
-    _activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     CGAffineTransform transform = CGAffineTransformMakeScale(1.25f, 1.25f);
-    _activityIndicator.transform = transform;
+    self.activityIndicator.transform = transform;
 
-    [self addSubview:_activityIndicator];
+    [self addSubview:self.activityIndicator];
 
-    [_activityIndicator autoAlignAxis:ALAxisHorizontal
-                     toSameAxisOfView:_messageLabel];
-    [_activityIndicator autoPinEdgeToSuperviewEdge:ALEdgeRight
-                                         withInset:25.f];
-    [_messageLabel autoPinEdgeToSuperviewEdge:ALEdgeRight
-                                    withInset:55.f];
-    [_messageLabel autoPinEdge:ALEdgeRight
-                        toEdge:ALEdgeLeft
-                        ofView:_activityIndicator
-                    withOffset:10];
+    [self.activityIndicator autoAlignAxis:ALAxisHorizontal toSameAxisOfView:self.messageLabel];
+    [self.activityIndicator autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:25.f];
+
+    [self.messageLabel autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:55.f];
+    [self.messageLabel autoPinEdge:ALEdgeRight
+                            toEdge:ALEdgeLeft
+                            ofView:self.activityIndicator
+                        withOffset:10];
 }
 
 - (void)createActionButton {
-    _actionButton = [[UIButton alloc] init];
-    [_actionButton setTitleColor:[PDSnackbarOptions sharedInstance].buttonTitleHighlighted
-                        forState:UIControlStateHighlighted];
-    [_actionButton setTitleColor:[PDSnackbarOptions sharedInstance].buttonTitleColor
-                        forState:UIControlStateNormal];
-    [self addSubview:_actionButton];
+    self.actionButton = [[UIButton alloc] init];
+    [self.actionButton setTitleColor:[PDSnackbarOptions sharedInstance].buttonTitleHighlighted
+                            forState:UIControlStateHighlighted];
+    [self.actionButton setTitleColor:[PDSnackbarOptions sharedInstance].buttonTitleColor
+                            forState:UIControlStateNormal];
+    [self addSubview:self.actionButton];
 
-    [_actionButton autoAlignAxis:ALAxisHorizontal
-                toSameAxisOfView:_messageLabel];
-    [_actionButton autoPinEdgeToSuperviewEdge:ALEdgeRight
-                                    withInset:10.f];
-    [_actionButton autoPinEdge:ALEdgeLeft
-                        toEdge:ALEdgeRight
-                        ofView:_messageLabel
-                    withOffset:10.f];
-    [_messageLabel autoPinEdgeToSuperviewEdge:ALEdgeRight
-                                    withInset:120.f];
+    [self.actionButton autoAlignAxis:ALAxisHorizontal
+                    toSameAxisOfView:self.messageLabel];
+    [self.actionButton autoPinEdgeToSuperviewEdge:ALEdgeRight
+                                        withInset:10.f];
+    [self.actionButton autoPinEdge:ALEdgeLeft
+                            toEdge:ALEdgeRight
+                            ofView:self.messageLabel
+                        withOffset:10.f];
+    [self.messageLabel autoPinEdgeToSuperviewEdge:ALEdgeRight
+                                        withInset:120.f];
 }
 
 #pragma mark - Action
 
-- (void)actionButtonTapped:(id)sender {
-    if (_actionBlock) {
-        _actionBlock();
+- (IBAction)actionButtonTapped:(id)sender {
+    if (self.actionBlock) {
+        self.actionBlock();
     }
     [self hide];
 }
 
-- (void)touchBlockTapped:(id)sender {
-    if (_touchBlock) {
-        _touchBlock();
+- (IBAction)touchBlockTapped:(id)sender {
+    if (self.touchBlock) {
+        self.touchBlock();
     }
     [self hide];
 }
@@ -219,10 +237,10 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
             return;
         }
     }
-    
+
     [[PDSnackbarOptions sharedInstance].containerView addSubview:self];
     [self addSwipeGestures];
-    [_activityIndicator startAnimating];
+    [self.activityIndicator startAnimating];
     [UIView animateWithDuration:PDSnackbarAnimationDuration
                      animations:^{
                          self.alpha = self.transparency;
@@ -230,20 +248,20 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
                          newFrame.origin.y = self.frame.origin.y - self.frame.size.height;
                          self.frame = newFrame;
                      }];
-    
-    if (_actionBlock || _activityIndicator) {
+
+    if (self.actionBlock || self.activityIndicator) {
         return;
     }
-    _timer = [NSTimer scheduledTimerWithTimeInterval:(self.duration > 0) ? self.duration : (double)_durationTime
-                                              target:self
-                                            selector:@selector(hide)
-                                            userInfo:nil
-                                             repeats:NO];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:(self.duration > 0) ? self.duration : (NSTimeInterval) self.durationTime
+                                                  target:self
+                                                selector:@selector(hide)
+                                                userInfo:nil
+                                                 repeats:NO];
 }
 
 - (void)hide {
-    [_timer invalidate];
-    _timer = nil;
+    [self.timer invalidate];
+    self.timer = nil;
     [UIView animateWithDuration:PDSnackbarAnimationDuration
                      animations:^{
                          self.alpha = 0.f;
@@ -254,21 +272,20 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
                      completion:^(BOOL finished) {
                          self.hidden = YES;
                          [self removeFromSuperview];
-                         [_activityIndicator stopAnimating];
+                         [self.activityIndicator stopAnimating];
                      }];
 }
 
 #pragma mark - UISwipeGestureRecognizer
 
 - (void)addSwipeGestures {
-    UISwipeGestureRecognizer *downSwipeGestureRecognizer =
-            [[UISwipeGestureRecognizer alloc] initWithTarget:self
-                                                      action:@selector(downSwipe:)];
+    UISwipeGestureRecognizer *downSwipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                                                                     action:@selector(downSwipe:)];
     downSwipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
     [self addGestureRecognizer:downSwipeGestureRecognizer];
 }
 
-- (void)downSwipe:(UISwipeGestureRecognizer *)swipeGestureRecognizer {
+- (IBAction)downSwipe:(UISwipeGestureRecognizer *)swipeGestureRecognizer {
     [self hide];
 }
 
