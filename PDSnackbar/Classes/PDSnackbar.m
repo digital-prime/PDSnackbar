@@ -11,6 +11,12 @@
 
 static CGFloat const PDSnackbarAnimationDuration = 0.2;
 
+NSString *const PDSnackbarMessageName = @"PDSnackbarMessageName";
+NSString *const PDSnackbarTapBlockName = @"PDSnackbarTapBlockName";
+NSString *const PDSnackbarActionButtonTitleName = @"PDSnackbarActionButtonTitleName";
+NSString *const PDSnackbarActionButtonTapBlockName = @"PDSnackbarActionButtonTapBlockName";
+NSString *const PDSnackbarDurationTimeName = @"PDSnackbarDurationTimeName";
+NSString *const PDSnackbarActivityIndicatorEnabledName = @"PDSnackbarActivityIndicatorEnabledName";
 
 @interface PDSnackbar ()
 
@@ -65,18 +71,20 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
     }];
 }
 
-- (nonnull instancetype)init {
+- (instancetype)initWithFrame:(CGRect)frame {
     return [self initWithConfiguration:@{}];
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-designated-initializers"
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    return [self initWithConfiguration:@{}];
+}
 
 - (nonnull instancetype)initWithConfiguration:(nonnull NSDictionary<NSString *, id> *)configuration {
-    self = [super init];
+    PDSnackbarOptions *pdOptions = [PDSnackbarOptions sharedInstance];
+    CGRect frame = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? pdOptions.frameIPad : pdOptions.frameIPhone;
+    self = [super initWithFrame:frame];
     if (self) {
-        PDSnackbarOptions *pdOptions = [PDSnackbarOptions sharedInstance];
-        self.frame = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? pdOptions.frameIPad : pdOptions.frameIPhone;
+        self.frame = frame;
 
         [self createMessageLabel];
         _messageLabel.text = configuration[PDSnackbarMessageName];
@@ -122,8 +130,6 @@ static CGFloat const PDSnackbarAnimationDuration = 0.2;
     }
     return self;
 }
-
-#pragma clang diagnostic pop
 
 #pragma mark - Dealloc
 
