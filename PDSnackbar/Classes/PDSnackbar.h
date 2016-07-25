@@ -34,7 +34,7 @@ FOUNDATION_EXTERN NSString *const PDSnackbarActivityIndicatorEnabledName;
 @property (assign, nonatomic) CGFloat transparency;
 @property (assign, nonatomic) NSTimeInterval duration;
 
-- (nonnull instancetype)initWithConfiguration:(nonnull NSDictionary<NSString *, id> *)configuration NS_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithConfiguration:(nonnull NSDictionary<NSString *, id> *)configuration;
 
 - (nonnull instancetype)initSnackBarWithMessage:(nonnull NSString *)message
                                        duration:(PDSnackbarDurationTime)durationTime;

@@ -71,14 +71,6 @@ NSString *const PDSnackbarActivityIndicatorEnabledName = @"PDSnackbarActivityInd
     }];
 }
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    return [self initWithConfiguration:@{}];
-}
-
-- (instancetype)initWithCoder:(NSCoder *)coder {
-    return [self initWithConfiguration:@{}];
-}
-
 - (nonnull instancetype)initWithConfiguration:(nonnull NSDictionary<NSString *, id> *)configuration {
     PDSnackbarOptions *pdOptions = [PDSnackbarOptions sharedInstance];
     CGRect frame = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? pdOptions.frameIPad : pdOptions.frameIPhone;
