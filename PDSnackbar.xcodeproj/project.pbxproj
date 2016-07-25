@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		258B33A94DDFD77CE20C30ED /* libPods-PDSnackbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 21FF4479DC59E4ADCE6C8F5E /* libPods-PDSnackbar.a */; };
 		7E1EBA321C6DE1EF0068A3E9 /* SF-UI-Display-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7E1EBA301C6DE1E40068A3E9 /* SF-UI-Display-Medium.otf */; };
 		7E1EBA331C6DE1F20068A3E9 /* SF-UI-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7E1EBA311C6DE1E40068A3E9 /* SF-UI-Display-Regular.otf */; };
 		7ED420211C6E21A90072E2BA /* PDSnackbarOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED420201C6E21A90072E2BA /* PDSnackbarOptions.m */; };
@@ -18,11 +17,10 @@
 		8EEA58C5EEB6CBE41B5811F6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8EEA51450B4DE257F44B60DA /* LaunchScreen.storyboard */; };
 		8EEA58DDDB98162C0D5B0669 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8EEA581B25D524FD39336D66 /* Main.storyboard */; };
 		8EEA5C4BC526B7AE621B89AD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EEA5052496D018F74CA186F /* Assets.xcassets */; };
+		AE45B53ED59FF08BD3CC055F /* libPods-PDSnackbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6494F56C7E71AF371C4DC53 /* libPods-PDSnackbar.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		21FF4479DC59E4ADCE6C8F5E /* libPods-PDSnackbar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PDSnackbar.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DA1D35C2A1773D385808351 /* Pods-PDSnackbar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PDSnackbar.release.xcconfig"; path = "Pods/Target Support Files/Pods-PDSnackbar/Pods-PDSnackbar.release.xcconfig"; sourceTree = "<group>"; };
 		7E1EBA301C6DE1E40068A3E9 /* SF-UI-Display-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Medium.otf"; sourceTree = "<group>"; };
 		7E1EBA311C6DE1E40068A3E9 /* SF-UI-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Regular.otf"; sourceTree = "<group>"; };
 		7EB570011C6CCDD800F38916 /* PDSnackbar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PDSnackbar.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -39,7 +37,9 @@
 		8EEA5AA94DDD55E5B71D6F7B /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		8EEA5AB056F467FFFD8A543A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8EEA5C20B59C6EA7366D5722 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		EB6E22570FB6987897F201BE /* Pods-PDSnackbar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PDSnackbar.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PDSnackbar/Pods-PDSnackbar.debug.xcconfig"; sourceTree = "<group>"; };
+		B53D6B1989A6DA9BC34C3BFE /* Pods-PDSnackbar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PDSnackbar.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PDSnackbar/Pods-PDSnackbar.debug.xcconfig"; sourceTree = "<group>"; };
+		BAE67D11C72DDF570E745527 /* Pods-PDSnackbar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PDSnackbar.release.xcconfig"; path = "Pods/Target Support Files/Pods-PDSnackbar/Pods-PDSnackbar.release.xcconfig"; sourceTree = "<group>"; };
+		D6494F56C7E71AF371C4DC53 /* libPods-PDSnackbar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PDSnackbar.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,37 +47,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				258B33A94DDFD77CE20C30ED /* libPods-PDSnackbar.a in Frameworks */,
+				AE45B53ED59FF08BD3CC055F /* libPods-PDSnackbar.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0B650B0DB9CFDB24C05ACD4D /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				21FF4479DC59E4ADCE6C8F5E /* libPods-PDSnackbar.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		4096D0AE084B88F6470C5740 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				EB6E22570FB6987897F201BE /* Pods-PDSnackbar.debug.xcconfig */,
-				3DA1D35C2A1773D385808351 /* Pods-PDSnackbar.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		7EB56FF81C6CCDD800F38916 = {
 			isa = PBXGroup;
 			children = (
 				7EB570021C6CCDD800F38916 /* Products */,
-				4096D0AE084B88F6470C5740 /* Pods */,
-				0B650B0DB9CFDB24C05ACD4D /* Frameworks */,
 				8EEA552051A91D400576BB9E /* PDSnackbar */,
+				C5225A7B3FAD6E8BE600DB4A /* Pods */,
+				CA122D228040734D87025A2B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -135,6 +118,23 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		C5225A7B3FAD6E8BE600DB4A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B53D6B1989A6DA9BC34C3BFE /* Pods-PDSnackbar.debug.xcconfig */,
+				BAE67D11C72DDF570E745527 /* Pods-PDSnackbar.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		CA122D228040734D87025A2B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D6494F56C7E71AF371C4DC53 /* libPods-PDSnackbar.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -142,12 +142,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7EB570181C6CCDD800F38916 /* Build configuration list for PBXNativeTarget "PDSnackbar" */;
 			buildPhases = (
-				2C3D32D71BECF58E9304E93B /* Check Pods Manifest.lock */,
+				8EFEC705C30BAFAA01DAF7DF /* [CP] Check Pods Manifest.lock */,
 				7EB56FFD1C6CCDD800F38916 /* Sources */,
 				7EB56FFE1C6CCDD800F38916 /* Frameworks */,
 				7EB56FFF1C6CCDD800F38916 /* Resources */,
-				4F511E216D7EE62DCDA1B368 /* Embed Pods Frameworks */,
-				CEA8B5CF8095B1DB12F1E7D0 /* Copy Pods Resources */,
+				48BA05AC124D5126F6513989 /* [CP] Embed Pods Frameworks */,
+				4B0DA5BF6BA8791503F6C4C5 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -206,29 +206,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2C3D32D71BECF58E9304E93B /* Check Pods Manifest.lock */ = {
+		48BA05AC124D5126F6513989 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		4F511E216D7EE62DCDA1B368 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -236,19 +221,34 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PDSnackbar/Pods-PDSnackbar-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CEA8B5CF8095B1DB12F1E7D0 /* Copy Pods Resources */ = {
+		4B0DA5BF6BA8791503F6C4C5 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PDSnackbar/Pods-PDSnackbar-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8EFEC705C30BAFAA01DAF7DF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -372,7 +372,7 @@
 		};
 		7EB570191C6CCDD800F38916 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EB6E22570FB6987897F201BE /* Pods-PDSnackbar.debug.xcconfig */;
+			baseConfigurationReference = B53D6B1989A6DA9BC34C3BFE /* Pods-PDSnackbar.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = PDSnackbar/Info.plist;
@@ -385,7 +385,7 @@
 		};
 		7EB5701A1C6CCDD800F38916 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3DA1D35C2A1773D385808351 /* Pods-PDSnackbar.release.xcconfig */;
+			baseConfigurationReference = BAE67D11C72DDF570E745527 /* Pods-PDSnackbar.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = PDSnackbar/Info.plist;
